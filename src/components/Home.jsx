@@ -6,22 +6,23 @@ import Grix from '../artifacts/contracts/GRIX.sol/GRIX.json';
 
 import placeholder from '../images/question.png';
 
-const contractAddress = '0xd97A6E52E1208f8eAbA47bf39B5EC792f431f69c';
+const contractAddress = '0xb6b635378396b14De24554aFaAfC0143D0B02b0B';
 
 // Create provider if window and ethereum are available
 const provider = new ethers.BrowserProvider(window.ethereum);
 
-// get the end user
-const signer = await provider.getSigner();
-
-// get the smart contract
-const contract = new ethers.Contract(contractAddress, Grix.abi, signer);
-
-
 function Home() {
-
+  const [contract, setContract] = useState(null);
   const [totalMinted, setTotalMinted] = useState(0);
+  async function getContract() {
+    //get the end user
+    const signer = await provider.getSigner();
+    //get the smart contract
+    const contract = new ethers.Contract(contractAddress, Grix.abi, signer);
+    setContract(contract);
+  }
   useEffect(() => {
+    getContract();
     getCount();
   }, []);
 
