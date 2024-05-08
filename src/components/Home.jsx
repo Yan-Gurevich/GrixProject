@@ -1,20 +1,10 @@
 import Balance from './Balance';
 import { useEffect, useState } from 'react';
-
 import  {ethers}  from 'ethers';
-import Grix from '../artifacts/contracts/GRIX.sol/GRIX.json';
 
 import placeholder from '../images/question.png';
 
-const contractAddress = '0xb6b635378396b14De24554aFaAfC0143D0B02b0B';
-
-const provider = new ethers.BrowserProvider(window.ethereum);
-
-const signer = await provider.getSigner();
-
-const contract = new ethers.Contract(contractAddress, Grix.abi, signer);
-
-function Home() {
+function Home({contract, signer}) {
   const [totalMinted, setTotalMinted] = useState(0);
 
   useEffect(() => {
@@ -35,13 +25,13 @@ function Home() {
       .fill(0)
       .map((_, i) => (
         <div key={i}>
-          <NFTImage tokenId={i} getCount={getCount} />
-          </div>
+          <NFTImage {...{ tokenId: i, getCount, contract, signer }} />
+        </div>
       ))}
     </div>
   );
 }
-function NFTImage({ tokenId, getCount }) {
+function NFTImage({ tokenId, getCount, contract, signer}) {
     const imgCID = 'QmaRQ7pARV2wMkfRfsLasqMHpkPXCq1aUz87uo4PUVcHzs';
     const jsonCID = 'QmVaR4X8EPGqXqP2AWFevYMWUVbNDURk1KFTX39eXektSe';
 
@@ -60,6 +50,7 @@ function NFTImage({ tokenId, getCount }) {
     };
   
     const mintToken = async () => {
+      console.log(signer)
       const connection = contract.connect(signer);
       const addr = connection.target;
       const result = await contract.payToMint(addr, metadataURI, {
