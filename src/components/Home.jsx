@@ -8,23 +8,19 @@ import placeholder from '../images/question.png';
 
 const contractAddress = '0xb6b635378396b14De24554aFaAfC0143D0B02b0B';
 
-// Create provider if window and ethereum are available
 const provider = new ethers.BrowserProvider(window.ethereum);
 
+const signer = await provider.getSigner();
+
+const contract = new ethers.Contract(contractAddress, Grix.abi, signer);
+
 function Home() {
-  const [contract, setContract] = useState(null);
   const [totalMinted, setTotalMinted] = useState(0);
-  async function getContract() {
-    //get the end user
-    const signer = await provider.getSigner();
-    //get the smart contract
-    const contract = new ethers.Contract(contractAddress, Grix.abi, signer);
-    setContract(contract);
-  }
+
   useEffect(() => {
-    getContract();
     getCount();
   }, []);
+
 
   const getCount = async () => {
     const count = await contract.count();
@@ -33,15 +29,15 @@ function Home() {
 
   return (
     <div>
-        <Balance />
+      <Balance />
 
-        {Array(totalMinted + 1)
-        .fill(0)
-        .map((_, i) => (
-            <div key={i}>
-            <NFTImage tokenId={i} getCount={getCount} />
-            </div>
-        ))}
+      {Array(totalMinted + 1)
+      .fill(0)
+      .map((_, i) => (
+        <div key={i}>
+          <NFTImage tokenId={i} getCount={getCount} />
+          </div>
+      ))}
     </div>
   );
 }
